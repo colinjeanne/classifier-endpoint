@@ -1,0 +1,21 @@
+{
+  "name": "classifier-endpoint",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "author": "Colin Jeanne <colinjeanne@hotmail.com> (http://www.colinjeanne.net)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/colinjeanne/classifier-endpoint.git"
+  },
+  "devDependencies": {
+    "jasmine": "^2.3.1"
+  },
+  "engines": {
+    "node": ">=0.12.0"
+  },
+  "private": true
+}
