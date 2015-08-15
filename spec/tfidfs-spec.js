@@ -43,4 +43,21 @@ describe('The Tf-Idf calculator', function() {
         expect(tfidfs.get('THIRD')).toEqual(0);
         expect(tfidfs.get('SAMPLE')).toBeCloseTo(Math.log(2), 2);
     });
+    
+    it('should save and reload its state', function() {
+        var tfidfCalculator = new TfIdf(englishTokenizer);
+        
+        tfidfCalculator.addDocument('this is a sample', 'A');
+        tfidfCalculator.addDocument('this is another example', 'A');
+        tfidfCalculator.calculateTfIdfs();
+        
+        var json = JSON.stringify(tfidfCalculator);
+        tfidfCalculator = TfIdf.load(JSON.parse(json));
+        
+        var tfidfs = tfidfCalculator.getTfIdfsForGroup('A');
+        expect(tfidfs.length).toEqual(2);
+        expect(tfidfs[0].get('THIS')).toEqual(0);
+        expect(tfidfs[0].get('IS')).toEqual(0);
+        expect(tfidfs[0].get('A')).toBeCloseTo(Math.log(2), 2);
+    });
 });

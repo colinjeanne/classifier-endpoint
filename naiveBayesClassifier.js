@@ -123,6 +123,23 @@ var classificationProbabilitiesToObject = function(classificationProbabilities) 
     return theObject;
 };
 
+var classificationProbabilitiesFromObject = function(theObject) {
+    var classificationProbabilities = new Map();
+    
+    Object.getOwnPropertyNames(theObject).forEach(function(classification) {
+        var probabilities = theObject[classification];
+        
+        classificationProbabilities.set(
+            classification,
+            {
+                classification: probabilities.classification,
+                tfidfProbabilities: utilities.mapFromObject(probabilities.tfidfProbabilities)
+            });
+    });
+    
+    return classificationProbabilities;
+};
+
 NaiveBayesClassifier.prototype.toJSON = function() {
     return {
         tfidf: this.tfidf,
@@ -132,13 +149,14 @@ NaiveBayesClassifier.prototype.toJSON = function() {
     };
 };
 
-NaiveBayesClassifier.prototype.save = function(filename, callback) {
-    var state = JSON.stringify(this);
-    fs.writeFile(filename, state, function(err) {
-        if (err) {
-            callback(err);
-        }
-    });
+NaiveBayesClassifier.load = function(json) {
+    var loadedState = new NaiveBayesClassifier();
+    
+    loadedState.tfidf = TfIdf.load(json.tfidf);
+    loadedState.classes = utilities.mapFromObject(json.classes);
+    loadedState.classificationProperties =
+        classificationProbabilitiesFromObject(json.classificationProbabilities);
+    loadedState.totalDocuments = json.totalDocuments;
 };
 
 module.exports = NaiveBayesClassifier;

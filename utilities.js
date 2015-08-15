@@ -21,10 +21,13 @@ var mapToObject = function(theMap) {
 };
 
 var mapFromObject = function(theObject) {
-    return Object.getOwnPropertyNames(theObject).
-        reduce(function(theMap, key) {
+    var theMap = new Map();
+    Object.getOwnPropertyNames(theObject).
+        forEach(function(key) {
             theMap.set(key, theObject[key]);
-        }, new Map());
+        });
+    
+    return theMap;
 };
 
 var utilities = {

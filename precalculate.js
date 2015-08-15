@@ -16,6 +16,5 @@ classifier.train();
 
 console.log('Training complete!');
 
-classifier.save('classifier.json', function(err) {
-    console.log(err);
-});
+var classifierState = JSON.stringify(classifier);
+fs.writeFileSync('classifier.json', classifierState);

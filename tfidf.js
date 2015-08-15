@@ -1,4 +1,5 @@
-var utilities = require('./utilities');
+var utilities = require('./utilities'),
+    Tokenizer = require('./tokenizer');
 
 var calculateTermFrequencies = function(words) {
     var frequencies = new Map();
@@ -134,6 +135,26 @@ TfIdf.prototype.toJSON = function() {
         idfs: utilities.mapToObject(this.idfs),
         words: utilities.setToArray(this.words)
     };
+};
+
+TfIdf.load = function(json) {
+    var loadedState = new TfIdf(new Tokenizer());
+    
+    loadedState.documents = json.documents.map(function(document) {
+        return {
+            tfs: utilities.mapFromObject(document.tfs),
+            tfidfs: utilities.mapFromObject(document.tfidfs),
+            group: document.group
+        };
+    });
+    
+    loadedState.documentFrequencies =
+        utilities.mapFromObject(json.documentFrequencies);
+    
+    loadedState.idfs = utilities.mapFromObject(json.idfs);
+    loadedState.words = utilities.setFromArray(json.words);
+    
+    return loadedState;
 };
 
 module.exports = TfIdf;

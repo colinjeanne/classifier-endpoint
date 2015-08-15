@@ -38,4 +38,13 @@ describe('Classifier', function() {
 
         expect(category).toEqual('Food');
     });
+    
+    it('should reload its state', function() {
+        var json = JSON.stringify(classifier);
+        var loadedClassifier = JSON.parse(json);
+        
+        var category = classifier.classify('This game is better');
+
+        expect(category).toEqual('Games');
+    });
 });
