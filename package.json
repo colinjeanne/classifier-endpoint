@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "jasmine"
   },
   "author": "Colin Jeanne <colinjeanne@hotmail.com> (http://www.colinjeanne.net)",
