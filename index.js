@@ -35,7 +35,7 @@ app.post('/',
             return next(createError(415, 'Expected array of documents'));
         } else {
             request.body.forEach(function(document) {
-                if (document.hasOwnProperty('full_text')) {
+                if (!document.hasOwnProperty('full_text')) {
                     hasBadDocument = true;
                 }
             });
