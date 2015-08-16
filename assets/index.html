@@ -189,7 +189,8 @@
                 clearResults();
                 
                 fetchOptions.body = JSON.stringify(
-                    prepareTestData(testDataField.textContent));
+                    prepareTestData(
+                        JSON.parse(testDataField.textContent)));
                 
                 fetch(testUrl.value, fetchOptions).
                     then(handleReturn).
