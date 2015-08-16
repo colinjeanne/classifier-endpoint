@@ -22,7 +22,7 @@ app.use(corsMiddleware);
 app.options('/', corsMiddleware);
 
 app.get('/', function(request, response) {
-    response.sendFile(__dirname + 'assets/index.html');
+    response.sendFile(__dirname + '/assets/index.html');
 });
 
 app.post('/',
