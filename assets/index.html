@@ -65,6 +65,10 @@
                 var documentClone = Object.assign({}, testDocument);
                 delete documentClone.category;
                 
+                if (!documentClone.hasOwnProperty("full_text")) {
+                    throw new Error('All documents must have a full_text property');
+                }
+                
                 return documentClone;
             });
         }
