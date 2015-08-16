@@ -154,9 +154,11 @@ NaiveBayesClassifier.load = function(json) {
     
     loadedState.tfidf = TfIdf.load(json.tfidf);
     loadedState.classes = utilities.mapFromObject(json.classes);
-    loadedState.classificationProperties =
+    loadedState.classificationProbabilities =
         classificationProbabilitiesFromObject(json.classificationProbabilities);
     loadedState.totalDocuments = json.totalDocuments;
+    
+    return loadedState;
 };
 
 module.exports = NaiveBayesClassifier;

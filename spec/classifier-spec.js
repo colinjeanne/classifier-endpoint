@@ -41,9 +41,9 @@ describe('Classifier', function() {
     
     it('should reload its state', function() {
         var json = JSON.stringify(classifier);
-        var loadedClassifier = JSON.parse(json);
+        var loadedClassifier = NaiveBayesClassifier.load(JSON.parse(json));
         
-        var category = classifier.classify('This game is better');
+        var category = loadedClassifier.classify('This game is better');
 
         expect(category).toEqual('Games');
     });
