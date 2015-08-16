@@ -190,7 +190,7 @@
                 
                 fetchOptions.body = JSON.stringify(
                     prepareTestData(
-                        JSON.parse(testDataField.textContent)));
+                        JSON.parse(testDataField.value)));
                 
                 fetch(testUrl.value, fetchOptions).
                     then(handleReturn).
