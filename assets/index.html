@@ -14,16 +14,28 @@
         button {
             display: block;
         }
+        
+        textarea {
+            display: block;
+        }
+        
+        output {
+            display: block;
+        }
+        
+        .error {
+            color: red;
+        }
     </style>
     <body>
         <h1>Classification Test</h1>
         <label>
             Server URL
-            <input type="url" id="testUrl"></input>
+            <input type="url" id="testUrl" size="40"></input>
         </label>
         <label>
             Enter Test Data (category fields will be stripped)
-            <textarea id="testData"></textarea>
+            <textarea id="testData" cols="80" rows="40"></textarea>
         </label>
         <button id="runTest" type="button">Run Test</button>
         <label>
@@ -72,7 +84,7 @@
         }
         
         function calculateResults(jsonResults) {
-            var expectedDataJson = JSON.parse(testDataField.textContent),
+            var expectedDataJson = JSON.parse(testDataField.value),
                 results,
                 index = 0,
                 jsonResult,
@@ -202,6 +214,7 @@
             }
         }
         
+        testUrl.value = document.documentUri;
         runTestButton.addEventListener('click', startTest);
     </script>
 </html>
