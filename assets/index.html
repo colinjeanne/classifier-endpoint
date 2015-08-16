@@ -85,7 +85,7 @@
         
         function calculateResults(jsonResults) {
             var expectedDataJson = JSON.parse(testDataField.value),
-                results,
+                results = {},
                 index = 0,
                 jsonResult,
                 expectedData,
@@ -214,7 +214,7 @@
             }
         }
         
-        testUrl.value = document.documentUri;
+        testUrl.value = document.documentURI;
         runTestButton.addEventListener('click', startTest);
     </script>
 </html>
