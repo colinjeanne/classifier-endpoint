@@ -95,7 +95,7 @@
                 throw new Error('Results did not have the same number of documents as the test');
             }
             
-            results.totalDocuments = 0;
+            results.totalDocuments = jsonResults.length;
             results.errors = [];
             
             for (; index < jsonResults.length; ++index) {
@@ -163,8 +163,8 @@
             
             results.errors.forEach(function(err) {
                 row = table.insertRow();
-                row.insertCell().textContent = results.expected;
-                row.insertCell().textContent = results.actual;
+                row.insertCell().textContent = err.expected;
+                row.insertCell().textContent = err.actual;
             });
             
             return table;
