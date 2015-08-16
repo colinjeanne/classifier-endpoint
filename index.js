@@ -35,7 +35,7 @@ app.post('/',
             return next(createError(415, 'Expected array of documents'));
         } else {
             request.body.forEach(function(document) {
-                if (!document.full_text) {
+                if (document.hasOwnProperty('full_text')) {
                     hasBadDocument = true;
                 }
             });
@@ -51,7 +51,7 @@ app.post('/',
         var classifiedDocuments = [];
         
         request.body.forEach(function(document) {
-            var classification = classifier.classify(document.full_text);
+            var classification = classifier.classify(document.full_text || document.blurb);
             document.category = classification;
             classifiedDocuments.push(document);
         });
