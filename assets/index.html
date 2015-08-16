@@ -1,0 +1,206 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Classification Test</title>
+        <meta charset="utf-8">
+    </head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/es6-shim/0.33.0/es6-shim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/0.9.0/fetch.min.js"></script>
+    <style type="text/css">
+        label {
+            display: block;
+        }
+        
+        button {
+            display: block;
+        }
+    </style>
+    <body>
+        <h1>Classification Test</h1>
+        <label>
+            Server URL
+            <input type="url" id="testUrl"></input>
+        </label>
+        <label>
+            Enter Test Data (category fields will be stripped)
+            <textarea id="testData"></textarea>
+        </label>
+        <button id="runTest" type="button">Run Test</button>
+        <label>
+            Results
+            <output id="results" for="testData expectedData"></output>
+        </label>
+    </body>
+    <script>
+        var testUrl = document.getElementById('testUrl'),
+            testDataField = document.getElementById('testData'),
+            runTestButton = document.getElementById('runTest'),
+            resultsField = document.getElementById('results'),
+            fetchHeaders = new Headers(),
+            fetchOptions;
+        
+        fetchHeaders.set('Accept', 'application/json');
+        fetchHeaders.set('Content-Type', 'application/json');
+        
+        fetchOptions = {
+            method: 'POST',
+            headers: fetchHeaders,
+            mode: 'cors'
+        };
+        
+        function prepareTestData(testDataJson) {
+            return testDataJson.map(function(testDocument) {
+                var documentClone = Object.assign({}, testDocument);
+                delete documentClone.category;
+                
+                return documentClone;
+            });
+        }
+        
+        function clearResults() {
+            while(results.firstChild) {
+                results.removeChild(results.firstChild);
+            }
+        }
+        
+        function areArraysEqual(arr1, arr2) {
+            return arr1.filter(function(element) {
+                return (arr2.indexOf(element) !== -1);
+            }) && arr2.filter(function(element) {
+                return (arr1.indexOf(element) !== -1);
+            });
+        }
+        
+        function calculateResults(jsonResults) {
+            var expectedDataJson = JSON.parse(testDataField.textContent),
+                results,
+                index = 0,
+                jsonResult,
+                expectedData,
+                documentKeys;
+            
+            if (jsonResults.length !== expectedDataJson.length) {
+                throw new Error('Results did not have the same number of documents as the test');
+            }
+            
+            results.totalDocuments = 0;
+            results.errors = [];
+            
+            for (; index < jsonResults.length; ++index) {
+                jsonResult = jsonResults[index];
+                expectedData = expectedDataJson[index];
+                documentKeys = Object.getOwnPropertyNames(jsonResult);
+                
+                if (!areArraysEqual(
+                    documentKeys,
+                    Object.getOwnPropertyNames(expectedData))) {
+                    throw new Error('Result document did not include all fields as expected [index=' + index + ']');
+                }
+                
+                documentKeys.forEach(function(key) {
+                    if (jsonResult[key] !== expectedData[key]) {
+                        if (key !== 'category') {
+                            throw new Error('Unordered or modified result field [key=' + key + '][index=' + index + ']');
+                        }
+                        
+                        results.errors.push({
+                            expected: expectedData['category'],
+                            actual: jsonResult['category']
+                        });
+                    }
+                });
+            }
+            
+            return results;
+        }
+        
+        function createOverview(results) {
+            var overview = document.createElement('table'),
+                row;
+            
+            overview.createCaption().textContent = 'Results Overview';
+            
+            row = overview.insertRow();
+            row.insertCell().textContent = 'Total Documents';
+            row.insertCell().textContent = results.totalDocuments;
+            
+            row = overview.insertRow();
+            row.insertCell().textContent = 'Total Successes';
+            row.insertCell().textContent = results.totalDocuments - results.errors.length;
+            
+            row = overview.insertRow();
+            row.insertCell().textContent = 'Total Failures';
+            row.insertCell().textContent = results.errors.length;
+            
+            row = overview.insertRow();
+            row.insertCell().textContent = 'Accuracy';
+            row.insertCell().textContent = (1 - results.errors.length / results.totalDocuments) * 100 + '%';
+            
+            return overview;
+        }
+        
+        function createErrorsTable(results) {
+            var table = document.createElement('table'),
+                row;
+            
+            table.createCaption().textContent = 'Failures';
+            
+            row = table.createTHead().insertRow();
+            row.insertCell().textContent = 'Expected Category';
+            row.insertCell().textContent = 'Actual Category';
+            
+            results.errors.forEach(function(err) {
+                row = table.insertRow();
+                row.insertCell().textContent = results.expected;
+                row.insertCell().textContent = results.actual;
+            });
+            
+            return table;
+        }
+        
+        function displayResults(results) {
+            resultsField.appendChild(createOverview(results));
+            
+            if (results.errors.length > 0) {
+                resultsField.appendChild(createErrorsTable(results));
+            }
+        }
+        
+        function handleReturn(response) {
+            if (!response.ok) {
+                throw new Error(response.status + ' ' + response.statusText);
+            }
+            
+            return response.json();
+        }
+        
+        function handleError(err) {
+            var errorNode = document.createElement('span');
+            errorNode.classList.add('error');
+            errorNode.textContent = err.message;
+            
+            resultsField.appendChild(errorNode);
+        }
+        
+        function startTest() {
+            if (testUrl.checkValidity()) {
+                testUrl.setCustomValidity('');
+                
+                clearResults();
+                
+                fetchOptions.body = JSON.stringify(
+                    prepareTestData(testDataField.textContent));
+                
+                fetch(testUrl.value, fetchOptions).
+                    then(handleReturn).
+                    then(calculateResults).
+                    then(displayResults).
+                    catch(handleError);
+            } else {
+                testUrl.setCustomValidity('Please enter a URL');
+            }
+        }
+        
+        runTestButton.addEventListener('click', startTest);
+    </script>
+</html>

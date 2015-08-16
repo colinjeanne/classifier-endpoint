@@ -21,6 +21,10 @@ app.use(corsMiddleware);
 
 app.options('/', corsMiddleware);
 
+app.get('/', function(request, response) {
+    response.sendFile('./assets/index.html');
+});
+
 app.post('/',
     function(request, response, next) {
         var hasBadDocument = false;
